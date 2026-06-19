@@ -159,8 +159,8 @@ def mood_tracker():
         monthly_fig = px.bar(monthly, x='date', y='score', color='mood',
                            title='Monthly Mood Distribution')
         
-        weekly_json = json.dumps(weekly_fig.to_dict())
-        monthly_json = json.dumps(monthly_fig.to_dict())
+        weekly_json = weekly_fig.to_json()
+        monthly_json = monthly_fig.to_json()
     else:
         weekly_json = monthly_json = None
     
@@ -198,6 +198,18 @@ def generate_report():
     except Exception as e:
         flash(f'An error occurred: {str(e)}', 'danger')
         return redirect(url_for('report'))
+
+@app.route('/chatbot')
+@login_required
+def chatbot():
+    return render_template('chatbot.html')
+
+@app.route('/chatbot', methods=['POST'])
+@login_required
+def chatbot_post():
+    message = request.form.get('message', '')
+    response = get_chatbot_response(message)
+    return jsonify({'response': response})
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -13,11 +13,18 @@
             <a class="navbar-brand fw-bold text-primary" href="/">MindGuard</a>
             <!-- Navbar links -->
             {% if session.user_id %}
-            <a href="{{ url_for('dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('chatbot') }}">Chat</a>
-            <a href="{{ url_for('mood_tracker') }}">Mood</a>
-            <a href="{{ url_for('report') }}">Reports</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
+            <div class="d-flex gap-3 align-items-center ms-auto">
+                <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('chatbot') }}" class="nav-link">Chat</a>
+                <a href="{{ url_for('mood_tracker') }}" class="nav-link">Mood</a>
+                <a href="{{ url_for('report') }}" class="nav-link">Reports</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+            </div>
+            {% else %}
+            <div class="d-flex gap-2 ms-auto">
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-sm">Login</a>
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">Register</a>
+            </div>
             {% endif %}
         </div>
     </nav>
@@ -31,7 +38,53 @@
           {% endif %}
         {% endwith %}
         
-        {% block content %}{% endblock %}
+        {% block content %}
+        <!-- Default content shown when no child template overrides this block (i.e. the landing page) -->
+        {% if not session.user_id %}
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8 text-center">
+                <h1 class="display-4 fw-bold text-primary mb-3">Welcome to MindGuard 🧠</h1>
+                <p class="lead text-muted mb-4">
+                    Your AI-powered mental health companion. Track your mood, chat with an empathetic AI, 
+                    and generate personalized wellness reports — all in one place.
+                </p>
+                <div class="d-flex justify-content-center gap-3 mb-5">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4">Get Started</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg px-4">Login</a>
+                </div>
+                <div class="row g-4 mt-3">
+                    <div class="col-md-4">
+                        <div class="card shadow-sm h-100 border-0">
+                            <div class="card-body text-center p-4">
+                                <div class="fs-1 mb-2">💬</div>
+                                <h5 class="card-title">AI Chatbot</h5>
+                                <p class="card-text text-muted small">Talk to an empathetic AI companion that understands your emotions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow-sm h-100 border-0">
+                            <div class="card-body text-center p-4">
+                                <div class="fs-1 mb-2">📊</div>
+                                <h5 class="card-title">Mood Tracking</h5>
+                                <p class="card-text text-muted small">Log your daily moods and visualize trends over time.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow-sm h-100 border-0">
+                            <div class="card-body text-center p-4">
+                                <div class="fs-1 mb-2">📄</div>
+                                <h5 class="card-title">Wellness Reports</h5>
+                                <p class="card-text text-muted small">Download personalized PDF reports with insights and recommendations.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endblock %}
         
         {% if session.user_id %}
         <div class="alert alert-info text-center small mt-4">
