@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindGuard - AI Mental Health Companion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="/">MindGuard</a>
+            <!-- Navbar links -->
+            {% if session.user_id %}
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('chatbot') }}">Chat</a>
+            <a href="{{ url_for('mood_tracker') }}">Mood</a>
+            <a href="{{ url_for('report') }}">Reports</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+        
+        {% if session.user_id %}
+        <div class="alert alert-info text-center small mt-4">
+            <strong>Need immediate help?</strong> 
+            <a href="#" onclick="showEmergency()">Click here for Helplines</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Emergency Modal -->
+    <div class="modal fade" id="emergencyModal" tabindex="-1" aria-labelledby="emergencyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold" id="emergencyModalLabel">🚨 Immediate Help & Support</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="lead">If you are in distress, feeling overwhelmed, or thinking of self-harm, please know that you are not alone. Reach out to one of the helplines below:</p>
+                    <hr>
+                    <h6 class="fw-bold text-danger">📞 India Support Lines</h6>
+                    <ul class="mb-3">
+                        <li><strong>iCall:</strong> 022-25521111 (Mon-Sat: 8am - 10pm)</li>
+                        <li><strong>AASRA:</strong> 91-9820466726 (24/7 Helpline)</li>
+                        <li><strong>Vandrevala Foundation:</strong> 9999 666 555 (24/7 Helpline)</li>
+                    </ul>
+                    <h6 class="fw-bold text-danger">📞 International Support Lines</h6>
+                    <ul>
+                        <li><strong>US:</strong> Call or text 988 to reach Suicide & Crisis Lifeline</li>
+                        <li><strong>UK:</strong> Call 111 (NHS) or 116 123 (Samaritans)</li>
+                        <li><strong>Worldwide:</strong> Visit <a href="https://www.befrienders.org" target="_blank" class="text-primary">befrienders.org</a> to find support in your area</li>
+                    </ul>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

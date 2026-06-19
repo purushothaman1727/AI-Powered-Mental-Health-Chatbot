@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">🌟 Mood Tracker</h2>
+    
+    <!-- Quick Mood Logger -->
+    <div class="card mb-4 shadow">
+        <div class="card-body">
+            <h5 class="card-title">How are you feeling today?</h5>
+            <form method="POST" class="row g-3">
+                <div class="row w-100">
+                    {% for mood, data in mood_options.items() %}
+                    <div class="col-md-2 col-4 mb-2">
+                        <button type="submit" name="mood" value="{{ mood }}" 
+                                class="btn btn-outline-primary w-100 h-100 p-3 fs-1">
+                            {{ data.emoji }}<br>
+                            <small>{{ mood }}</small>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="col-12 mt-3">
+                    <textarea name="note" class="form-control" rows="2" 
+                              placeholder="Optional note (e.g., 'Work pressure today')"></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div id="weekly-chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div id="monthly-chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h5>Recent Mood History</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Mood</th>
+                        <th>Score</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in moods[:10] %}
+                    <tr>
+                        <td>{{ entry['date'] }}</td>
+                        <td>{{ entry['mood'] }}</td>
+                        <td>{{ entry['score'] }}/5</td>
+                        <td>{{ entry['note'] or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Embed JSON safely so the JS linter doesn't parse it as code -->
+<script id="weekly-json-data" type="application/json">
+    {{ weekly_json | safe if weekly_json else 'null' }}
+</script>
+<script id="monthly-json-data" type="application/json">
+    {{ monthly_json | safe if monthly_json else 'null' }}
+</script>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    // Safely parse the JSON data embedded above
+    const weeklyDataEl = document.getElementById('weekly-json-data');
+    const monthlyDataEl = document.getElementById('monthly-json-data');
+
+    const weeklyData = weeklyDataEl ? JSON.parse(weeklyDataEl.textContent) : null;
+    const monthlyData = monthlyDataEl ? JSON.parse(monthlyDataEl.textContent) : null;
+    
+    if (weeklyData) Plotly.newPlot('weekly-chart', weeklyData.data, weeklyData.layout);
+    if (monthlyData) Plotly.newPlot('monthly-chart', monthlyData.data, monthlyData.layout);
+</script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow" style="height: 70vh;">
+    <div class="card-header bg-primary text-white">
+        <h4>AI Companion Chat</h4>
+    </div>
+    <div id="chat-window" class="card-body overflow-auto" style="height: 80%; background: #f8f9fa;">
+        <!-- Messages populated by JS -->
+    </div>
+    <div class="card-footer">
+        <form id="chat-form" class="input-group">
+            <input type="text" id="user-input" class="form-control" placeholder="How are you feeling today?" required>
+            <button class="btn btn-primary" type="submit">Send</button>
+        </form>
+    </div>
+</div>
+<!-- Inside the chat-window -->
+<script>
+document.getElementById('chat-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('user-input');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    appendMessage('You', message, 'text-end');
+    input.value = '';
+
+    const res = await fetch('/chatbot', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `message=${encodeURIComponent(message)}`
+    });
+    
+    const data = await res.json();
+    
+    // Special styling for emergency response
+    if (data.response.includes("🛑") || data.response.includes("not alone")) {
+        appendMessage('MindGuard', data.response, 'text-start bg-danger text-white');
+    } else {
+        appendMessage('MindGuard', data.response, 'text-start bg-light');
+    }
+});
+
+function appendMessage(sender, text, classes) {
+    const chat = document.getElementById('chat-window');
+    const div = document.createElement('div');
+    div.className = `mb-3 p-3 rounded ${classes}`;
+    div.innerHTML = `<strong>${sender}:</strong><br>${text}`;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+</script>
+{% endblock %}

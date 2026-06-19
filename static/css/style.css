@@ -1,0 +1,5 @@
+body { font-family: 'Segoe UI', sans-serif; }
+.card { border-radius: 15px; }
+.btn-primary { background-color: #4e73df; }
+.bg-light { background-color: #f8f9fa !important; }
+/* Soft colors, ample whitespace */
